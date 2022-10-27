@@ -25,6 +25,7 @@ function App() {
       },
     }
   );
+
   return status === "loading" ? (
     <p>Loading...</p>
   ) : status === "error" ? (
