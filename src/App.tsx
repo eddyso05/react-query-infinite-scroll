@@ -2,6 +2,7 @@ import "./App.css";
 import { useInfiniteQuery } from "react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+// @desc fetch Products from dummy json
 const fetchProducts = async ({ pageParam = 0 }) => {
   const data = await (
     await fetch(`https://dummyjson.com/products?limit=10&skip=${pageParam}`)
@@ -14,7 +15,9 @@ function App() {
     ["products"],
     fetchProducts,
     {
+      // getNextPageParam determining if there is more data to load and the information to fetch it.
       getNextPageParam: (lastPage, pages) => {
+        // need to check if current page have more than totalPage or current skip have more than total products
         if (parseInt(lastPage.skip) < lastPage.total) {
           return parseInt(lastPage.skip) + lastPage.limit;
         }
@@ -31,6 +34,8 @@ function App() {
       <InfiniteScroll
         hasMore={hasNextPage || false}
         next={fetchNextPage}
+        // current page / length of the products array
+        // it become a bit messy because that api is using skip instead of page
         dataLength={
           (data?.pages[data?.pages.length - 1].skip / data?.pages[0].limit) *
           data?.pages[0].limit
@@ -38,7 +43,9 @@ function App() {
         loader={<IndeterminateProgress />}
         endMessage={<EndMessage />}
       >
+        {/* first loop is for check how many pages have */}
         {data?.pages.map((pages: any) => {
+          // second loop is loop the products
           return pages?.products.map((post: any, index: number) => {
             return (
               <>
@@ -60,6 +67,7 @@ function App() {
   );
 }
 
+// loading msg
 function IndeterminateProgress() {
   return (
     <div className="css-1axwbpm h-2 ">
@@ -70,6 +78,7 @@ function IndeterminateProgress() {
   );
 }
 
+// When that is finish up the scroll
 export function EndMessage() {
   return (
     <div className="px-4 py-3">
